@@ -1,0 +1,11 @@
+<!-- Original mark for this folder (not sourced from an icon library) — two
+     overlapping figures, so "Become a Pixel Pal" reads as distinctly about
+     people/community rather than reusing icon-user-heart.svg's single
+     person, which is Find's. Fill #E7DBFB (lavender-40) matches the
+     sibling icons in this folder, all meant to sit on the navy container. -->
+<svg width="24" height="24" viewBox="0 0 24 24" fill="#E7DBFB" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="16" cy="8" r="3" opacity="0.55"/>
+  <path d="M10 21v-1.25C10 16.35 12.85 13.5 16.5 13.5c2.02 0 3.83.92 5.04 2.36A6.6 6.6 0 0 1 23 20.25V21H10Z" opacity="0.55"/>
+  <circle cx="8.5" cy="8.5" r="4"/>
+  <path d="M1.5 21v-1.5C1.5 15.86 5.03 12.5 9.5 12.5c1.77 0 3.4.55 4.74 1.49C15.87 15.06 17 17.16 17 19.5V21H1.5Z"/>
+</svg>
