@@ -7,7 +7,9 @@ type AttachSheetProps = {
   isOpen: boolean
   onClose: () => void
   onAttach: (attachment: MessageAttachment) => void
-  onCheckIn: () => void
+  /** Omit to hide "Send a check-in" — used by threads that don't have the
+   * check-in feature yet (e.g. the V2 Pixel Pal first-contact thread). */
+  onCheckIn?: () => void
 }
 
 function readAsDataUrl(file: File): Promise<string> {
@@ -47,15 +49,17 @@ export function AttachSheet({ isOpen, onClose, onAttach, onCheckIn }: AttachShee
     <>
       <Sheet isOpen={isOpen} onClose={onClose} title="Add">
         <div className="flex flex-col gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => {
-              onCheckIn()
-              onClose()
-            }}
-          >
-            Send a check-in
-          </Button>
+          {onCheckIn && (
+            <Button
+              variant="secondary"
+              onClick={() => {
+                onCheckIn()
+                onClose()
+              }}
+            >
+              Send a check-in
+            </Button>
+          )}
           <Button variant="secondary" onClick={() => cameraInputRef.current?.click()}>
             Image from Camera
           </Button>

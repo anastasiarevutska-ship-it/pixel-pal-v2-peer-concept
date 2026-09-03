@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useDemoStore } from '../store/useDemoStore'
+import { useDemoStore, type MatchAvailabilityDemo, type MatchOutcomeDemo } from '../store/useDemoStore'
 import type { ImpactDemoState } from '../lib/impactDemo'
 
 type JumpTarget = 'fresh' | 'pending' | 'active' | 'quiet' | 'graduation'
@@ -11,6 +11,20 @@ const jumpTargets: { key: JumpTarget; label: string }[] = [
   { key: 'active', label: 'Active' },
   { key: 'quiet', label: 'Quiet' },
   { key: 'graduation', label: 'Graduation' },
+]
+
+// V2 prototype only — see `MatchOutcomeDemo`. Not a real patient preference.
+const matchOutcomeOptions: { key: MatchOutcomeDemo; label: string }[] = [
+  { key: 'match_found', label: 'Match found' },
+  { key: 'no_match_yet', label: 'No match yet' },
+]
+
+// V2 prototype only — see `MatchAvailabilityDemo`. Simulates an async match
+// arriving while she's in the "No match yet" waiting state; not real
+// asynchronous matching.
+const matchAvailabilityOptions: { key: MatchAvailabilityDemo; label: string }[] = [
+  { key: 'still_looking', label: 'Still looking' },
+  { key: 'match_ready', label: 'Match ready' },
 ]
 
 const impactTargets: { key: ImpactDemoState; label: string }[] = [
@@ -53,6 +67,10 @@ export function DemoControls() {
   const pauseRelationship = useDemoStore((s) => s.pauseRelationship)
   const resumeRelationship = useDemoStore((s) => s.resumeRelationship)
   const resetDemo = useDemoStore((s) => s.resetDemo)
+  const matchOutcomeDemo = useDemoStore((s) => s.matchOutcomeDemo)
+  const setMatchOutcomeDemo = useDemoStore((s) => s.setMatchOutcomeDemo)
+  const matchAvailabilityDemo = useDemoStore((s) => s.matchAvailabilityDemo)
+  const setMatchAvailabilityDemo = useDemoStore((s) => s.setMatchAvailabilityDemo)
 
   const palId = useDemoStore((s) => s.palFlow.palId)
   const palProfile = useDemoStore((s) => s.palProfiles[palId])
@@ -388,6 +406,52 @@ export function DemoControls() {
                     {t.label}
                   </button>
                 ))}
+              </div>
+
+              {/* V2 prototype only — decides which way `PixelPalFinding`
+                  branches. Not a real matching outcome or patient
+                  preference, never shown inside the phone UI. */}
+              <p className="mb-1 text-label-bold text-navy-60">MATCH OUTCOME (PROTOTYPE)</p>
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {matchOutcomeOptions.map((option) => {
+                  const selected = matchOutcomeDemo === option.key
+                  return (
+                    <button
+                      key={option.key}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => setMatchOutcomeDemo(option.key)}
+                      className={`rounded-field border px-3 py-1.5 text-label-bold transition-colors ${
+                        selected ? 'border-navy bg-navy text-white' : 'border-navy-20 text-navy'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* V2 prototype only — simulates an async match arriving while
+                  she's on the "No match yet" waiting state (Home's
+                  `PixelPalReminderCard`). Not real asynchronous matching. */}
+              <p className="mb-1 text-label-bold text-navy-60">MATCH AVAILABILITY (PROTOTYPE)</p>
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {matchAvailabilityOptions.map((option) => {
+                  const selected = matchAvailabilityDemo === option.key
+                  return (
+                    <button
+                      key={option.key}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => setMatchAvailabilityDemo(option.key)}
+                      className={`rounded-field border px-3 py-1.5 text-label-bold transition-colors ${
+                        selected ? 'border-navy bg-navy text-white' : 'border-navy-20 text-navy'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  )
+                })}
               </div>
             </>
           )}

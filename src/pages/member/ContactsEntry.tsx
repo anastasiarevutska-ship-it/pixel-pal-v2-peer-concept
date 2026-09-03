@@ -44,6 +44,7 @@ export default function ContactsEntry() {
   const memberId = useDemoStore((s) => s.currentMemberId)
   const member = useDemoStore((s) => s.people[memberId])
   const retirePixelPalReminder = useDemoStore((s) => s.retirePixelPalReminder)
+  const startMemberFlow = useDemoStore((s) => s.startMemberFlow)
   const ongoing = useOngoingPalEntry()
 
   // She's seen the real invite here — the Home dashboard's reminder card
@@ -54,9 +55,23 @@ export default function ContactsEntry() {
 
   const cardBody =
     ongoing?.body ??
-    'Talk with someone who’s been through fertility treatment — or be that person for someone else. Real experience, never medical advice.'
+    'Connect one-to-one with someone who understands. Share experiences, talk things through, and navigate fertility treatment together.'
 
-  const primaryLabel = ongoing?.label ?? 'Get started'
+  const primaryLabel = ongoing?.label ?? 'Find a Pixel Pal'
+
+  // V2 is peer-to-peer only — no Member/Pal role fork in the active journey
+  // (see docs/pixel-pal-v2-source-of-truth.md). This goes straight to the
+  // same place the fork's own "Find" option did (`PixelPalFork.handleFind`),
+  // just without that screen in between. The fork itself still exists at
+  // `/m/pixel-pal` for reference; this card no longer routes through it.
+  function handleFindPixelPal() {
+    if (ongoing) {
+      navigate(ongoing.to)
+      return
+    }
+    startMemberFlow(memberId)
+    navigate('/m/how-it-works')
+  }
 
   return (
     <div className="relative flex min-h-full flex-col">
@@ -122,10 +137,7 @@ export default function ContactsEntry() {
           ) : (
             <p className="text-body text-navy-80">{cardBody}</p>
           )}
-          <Button
-            variant="primary"
-            onClick={() => navigate(ongoing ? ongoing.to : '/m/pixel-pal')}
-          >
+          <Button variant="primary" onClick={handleFindPixelPal}>
             {primaryLabel}
           </Button>
         </Card>

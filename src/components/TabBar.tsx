@@ -72,17 +72,23 @@ function buildTabs(pathname: string, messagesNeedsAttention: boolean, palHasRepl
           : undefined,
     },
     { key: 'library', label: 'Library', icon: iconNavBook },
-    { key: 'groups', label: 'Groups', icon: iconNavCommunity },
+    {
+      key: 'groups',
+      label: 'Groups',
+      to: '/groups',
+      active: pathname.startsWith('/groups'),
+      icon: iconNavCommunity,
+    },
   ]
 }
 
 /**
- * Real app tab bar (Figma: Home & Contact screens). Home and Messages are
- * wired to the screens that actually exist here (/home, /m — "Contact us"
- * lives conceptually under Messages in the real app, matching the Contact
- * screen's own active-tab state). Treatment/Library/Groups are visual only
- * — those sections aren't built, so they're shown honestly rather than
- * faked as working.
+ * Real app tab bar (Figma: Home & Contact screens). Home, Messages, and now
+ * Groups (`/groups`, `CommunityGroups`) are wired to the screens that
+ * actually exist here ("Contact us" lives conceptually under Messages in
+ * the real app, matching the Contact screen's own active-tab state).
+ * Treatment/Library are still visual only — those sections aren't built, so
+ * they're shown honestly rather than faked as working.
  */
 export function TabBar() {
   const { pathname } = useLocation()
@@ -90,6 +96,8 @@ export function TabBar() {
   const currentRelationshipId = useDemoStore((s) => s.memberFlow.currentRelationshipId)
   const relationships = useDemoStore((s) => s.relationships)
   const palId = useDemoStore((s) => s.palFlow.palId)
+  const pixelPalSearchActive = useDemoStore((s) => s.pixelPalSearchActive)
+  const matchAvailabilityDemo = useDemoStore((s) => s.matchAvailabilityDemo)
 
   const hasUnseenOutcome = !!lastOutcome && !lastOutcome.seenAt
   // "Still waiting" — a request she's sent is sitting with a Pal, unanswered.
@@ -115,7 +123,13 @@ export function TabBar() {
     return !!last && last.senderId !== palId
   })
 
-  const tabs = buildTabs(pathname, hasUnseenOutcome || isAwaitingReply, palHasReplyOwed)
+  // V2 prototype only — her Pixel Pal search (`pixelPalSearchActive`) came
+  // back ready per the "Match availability" demo control. Reuses this same
+  // coral dot rather than a new indicator; see `PixelPalReminderCard` for
+  // where it actually shows up.
+  const pixelPalMatchReady = pixelPalSearchActive && matchAvailabilityDemo === 'match_ready'
+
+  const tabs = buildTabs(pathname, hasUnseenOutcome || isAwaitingReply || pixelPalMatchReady, palHasReplyOwed)
 
   return (
     <div className="flex items-start border-t border-lavender-20 bg-white px-2 pt-2">

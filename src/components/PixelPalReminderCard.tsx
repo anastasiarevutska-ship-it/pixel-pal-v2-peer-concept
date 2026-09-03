@@ -50,6 +50,15 @@ function  RiHeart3Fill() {
  *
  * Copy is an invitation, not a task (spec §10): no urgency, no badge, no
  * unread dot, and the dismissal is as prominent as the action.
+ *
+ * V2 addendum — once she's been through the "No match yet" branch
+ * (`pixelPalSearchActive`, set by `PixelPalNoMatchYet`), this stops being a
+ * discretionary feature reminder and becomes real status: it shows on every
+ * visit, isn't dismissible, and ignores the cadence/`hasOngoing` rules above
+ * (those are about the older Suggestions-based relationship flow, a
+ * different, unrelated state). `matchAvailabilityDemo` — a presentation-only
+ * demo control, not real async matching — decides whether it reads
+ * "searching" or "ready". See docs/pixel-pal-v2-source-of-truth.md.
  */
 export function PixelPalReminderCard() {
   const navigate = useNavigate()
@@ -63,6 +72,8 @@ export function PixelPalReminderCard() {
   const registerHomeVisit = useDemoStore((s) => s.registerHomeVisit)
   const retirePixelPalReminder = useDemoStore((s) => s.retirePixelPalReminder)
   const startMemberFlow = useDemoStore((s) => s.startMemberFlow)
+  const pixelPalSearchActive = useDemoStore((s) => s.pixelPalSearchActive)
+  const matchAvailabilityDemo = useDemoStore((s) => s.matchAvailabilityDemo)
 
   // This visit's number, resolved once after the visit is counted.
   //
@@ -88,7 +99,15 @@ export function PixelPalReminderCard() {
   // `forced` is the §9 demo control — it bypasses the cadence so the client
   // can see the card on demand, but not the "she already has a Pal" rule.
   const onSchedule = forced || (visitNo !== null && visitNo % VISIT_INTERVAL === 1)
-  const visible = visitNo !== null && !retired && !hasOngoing && onSchedule
+
+  const cardState: 'cold' | 'searching' | 'ready' = !pixelPalSearchActive
+    ? 'cold'
+    : matchAvailabilityDemo === 'match_ready'
+      ? 'ready'
+      : 'searching'
+
+  const visible =
+    cardState === 'cold' ? visitNo !== null && !retired && !hasOngoing && onSchedule : true
 
   function handleFind() {
     retirePixelPalReminder()
@@ -114,26 +133,64 @@ export function PixelPalReminderCard() {
             <p className="flex-1 text-card-title text-navy">Pixel Pal</p>
           </div>
 
-          <div className="flex flex-col gap-1.5 text-navy-80">
-            <p className="text-body-bold">Talk to someone who&rsquo;s been here</p>
-            <p className="text-body">
-              We can suggest a few people who&rsquo;ve been through the same treatment. Whenever
-              you&rsquo;re ready — it&rsquo;s completely up to you.
-            </p>
-          </div>
+          {cardState === 'cold' && (
+            <>
+              <div className="flex flex-col gap-1.5 text-navy-80">
+                <p className="text-body-bold">Find someone who gets it</p>
+                <p className="text-body">
+                  Connect one-to-one with another patient who shares relevant experience.
+                  We&rsquo;ll find a Pixel Pal based on what matters to you.
+                </p>
+              </div>
 
-          <div className="flex items-center gap-3">
-            <Button variant="secondary" className="border border-lavender" onClick={handleFind}>
-              Find a Pixel Pal
-            </Button>
-            <button
-              type="button"
-              onClick={retirePixelPalReminder}
-              className="min-h-11 shrink-0 whitespace-nowrap px-2 text-body-sm text-navy-60 underline-offset-4 hover:underline"
-            >
-              Not now
-            </button>
-          </div>
+              <div className="flex items-center gap-3">
+                <Button variant="secondary" className="border border-lavender" onClick={handleFind}>
+                  Find a Pixel Pal
+                </Button>
+                <button
+                  type="button"
+                  onClick={retirePixelPalReminder}
+                  className="min-h-11 shrink-0 whitespace-nowrap px-2 text-body-sm text-navy-60 underline-offset-4 hover:underline"
+                >
+                  Not now
+                </button>
+              </div>
+            </>
+          )}
+
+          {cardState === 'searching' && (
+            <>
+              <div className="flex flex-col gap-1.5 text-navy-80">
+                <p className="text-body-bold">We&rsquo;re looking for your Pixel Pal</p>
+                <p className="text-body">We&rsquo;ll let you know when we find the right connection.</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="secondary"
+                  className="border border-lavender"
+                  onClick={() => navigate('/m/no-match-yet')}
+                >
+                  View status
+                </Button>
+              </div>
+            </>
+          )}
+
+          {cardState === 'ready' && (
+            <>
+              <div className="flex flex-col gap-1.5 text-navy-80">
+                <p className="text-body-bold">Your Pixel Pal is ready</p>
+                <p className="text-body">We&rsquo;ve found someone for you.</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button variant="primary" onClick={() => navigate('/m/match-found')}>
+                  Meet your Pixel Pal
+                </Button>
+              </div>
+            </>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

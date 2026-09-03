@@ -4,25 +4,19 @@ import { Card } from '../components/ui/Card'
 import { Toast } from '../components/ui/Toast'
 import { useDemoStore } from '../store/useDemoStore'
 import pixelLogo from '../assets/brand/pixel-logo.svg'
-import iconUserHeart from '../assets/contact/icon-user-heart.svg'
 import iconPeopleHeart from '../assets/contact/icon-people-heart.svg'
 
-// Same icon pairing as `PixelPalFork` (M1's Member/Pal fork): user-heart for
-// finding support yourself, people-heart for offering it to others — reused
-// here rather than invented, so the two entry points read as the same two
-// perspectives the product already uses that iconography for.
-const roles = [
+// V2 is a single peer-to-peer concept, not a role split — one entry point
+// into the existing Main App patient experience. The people-heart icon is
+// kept from the old Pal-experience card: it's the pairing icon (see
+// ContactsEntry's docblock), not one side of a role, so it still reads
+// correctly here.
+const entries = [
   {
     to: '/m',
-    icon: iconUserHeart,
-    title: 'Member experience',
-    description: 'Find support from someone who’s been there.',
-  },
-  {
-    to: '/pal',
     icon: iconPeopleHeart,
-    title: 'Pal experience',
-    description: 'Be there for someone — on your own terms.',
+    title: 'Pixel Pal V2',
+    description: 'Explore the peer-to-peer patient experience.',
   },
 ]
 
@@ -50,25 +44,25 @@ export default function Launcher() {
       <img src={pixelLogo} alt="Pixel Care" className="h-[88px] w-[88px]" />
 
       <div className="mt-2 max-w-2xl text-center">
-        <p className="text-label-bold uppercase text-lavender">Pixel Pal · Concept exploration</p>
+        <p className="text-label-bold uppercase text-lavender">Pixel Pal · Peer connection concept</p>
         <h1 className="mt-2 text-display">Reimagining the Pixel Pal experience</h1>
       </div>
 
       <p className="mt-6 max-w-2xl text-center text-body text-navy-60">
-        A concept prototype exploring how Pixel Pal could feel more human, supportive, and
-        sustainable — for both members and Pals.
+        A concept exploring a simpler, peer-to-peer way for patients to connect through shared
+        fertility treatment experience.
       </p>
 
-      <div className="mt-20 grid w-full max-w-2xl gap-4 sm:grid-cols-2">
-        {roles.map((role) => (
-          <Link key={role.to} to={role.to} className="block">
+      <div className="mt-20 grid w-full max-w-2xl gap-4 sm:grid-cols-1">
+        {entries.map((entry) => (
+          <Link key={entry.to} to={entry.to} className="block">
             <Card className="flex h-full cursor-pointer flex-col gap-3 transition-transform hover:-translate-y-0.5">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-field bg-navy p-2.5">
-                <img src={role.icon} alt="" aria-hidden="true" className="h-5 w-5" />
+                <img src={entry.icon} alt="" aria-hidden="true" className="h-5 w-5" />
               </span>
               <div>
-                <p className="text-h4">{role.title}</p>
-                <p className="mt-1 text-body-sm text-navy-60">{role.description}</p>
+                <p className="text-h4">{entry.title}</p>
+                <p className="mt-1 text-body-sm text-navy-60">{entry.description}</p>
               </div>
             </Card>
           </Link>

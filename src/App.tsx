@@ -6,6 +6,11 @@ import PixelPalFork from './pages/member/PixelPalFork'
 import HowItWorks from './pages/member/HowItWorks'
 import RequestNeeds from './pages/member/RequestNeeds'
 import RequestNote from './pages/member/RequestNote'
+import SocialProfilePreview from './pages/member/SocialProfilePreview'
+import PixelPalFinding from './pages/member/PixelPalFinding'
+import PixelPalMatchFound from './pages/member/PixelPalMatchFound'
+import PixelPalChat from './pages/member/PixelPalChat'
+import PixelPalNoMatchYet from './pages/member/PixelPalNoMatchYet'
 import Suggestions from './pages/member/Suggestions'
 import SayHello from './pages/member/SayHello'
 import Pending from './pages/member/Pending'
@@ -32,6 +37,7 @@ import PalGraduationMoment from './pages/pal/PalGraduationMoment'
 import Coordinator from './pages/Coordinator'
 import TokenShowcase from './pages/TokenShowcase'
 import HomeDashboard from './pages/HomeDashboard'
+import CommunityGroups from './pages/CommunityGroups'
 
 function App() {
   return (
@@ -47,6 +53,11 @@ function App() {
         <Route path="how-it-works" element={<HowItWorks />} />
         <Route path="request/needs" element={<RequestNeeds />} />
         <Route path="request/note" element={<RequestNote />} />
+        <Route path="social-profile-preview" element={<SocialProfilePreview />} />
+        <Route path="finding" element={<PixelPalFinding />} />
+        <Route path="match-found" element={<PixelPalMatchFound />} />
+        <Route path="pixel-pal-chat" element={<PixelPalChat />} />
+        <Route path="no-match-yet" element={<PixelPalNoMatchYet />} />
         <Route path="suggestions" element={<Suggestions />} />
         <Route path="say-hello" element={<SayHello />} />
         <Route path="pending" element={<Pending />} />
@@ -78,6 +89,7 @@ function App() {
       <Route path="/bo/*" element={<Coordinator />} />
       <Route path="/tokens" element={<TokenShowcase />} />
       <Route path="/home" element={<HomeDashboard />} />
+      <Route path="/groups" element={<CommunityGroups />} />
     </Routes>
   )
 }

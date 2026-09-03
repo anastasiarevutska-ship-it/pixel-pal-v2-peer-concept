@@ -35,6 +35,25 @@ type PalOutcome = {
 }
 
 /**
+ * V2 prototype-only branch control for "Finding your Pixel Pal"
+ * (`PixelPalFinding`) — not a real matching outcome, not any patient
+ * preference or production state. Set from DemoControls' "Match outcome"
+ * toggle (member side); see docs/pixel-pal-v2-source-of-truth.md — the real
+ * matching algorithm is still an open product question.
+ */
+export type MatchOutcomeDemo = 'match_found' | 'no_match_yet'
+
+/**
+ * V2 prototype-only presentation control simulating an async match arriving
+ * while the member is in the "No match yet" waiting state
+ * (`pixelPalSearchActive`, below) — set from DemoControls' "Match
+ * availability" toggle (member side). Not real asynchronous matching: there
+ * is no background job or timer behind this, only a manually-flipped demo
+ * flag `PixelPalReminderCard` reads to decide what its Home card shows.
+ */
+export type MatchAvailabilityDemo = 'still_looking' | 'match_ready'
+
+/**
  * The live demo data layer — spec §2's "critical" instruction: built for
  * all three roles (member, Pal, coordinator) from day one, not modeled
  * around the member and retrofit later. Initialized from the static seed
@@ -142,6 +161,23 @@ function buildInitialState() {
     // Demo-control override — shows the reminder regardless of where the
     // visit counter currently sits. Not a product concept.
     pixelPalReminderForced: false,
+    // V2 prototype-only — see `MatchOutcomeDemo` above. Defaults to the
+    // happy path so the flow demos end-to-end without touching the panel.
+    matchOutcomeDemo: 'match_found' as MatchOutcomeDemo,
+    // V2 prototype flow state — true once she's reached `/m/no-match-yet`
+    // (see `beginPixelPalSearch`), false for a cold/new patient. Not itself
+    // a demo control: it's set automatically by the No Match Yet screen,
+    // not flipped from the panel.
+    pixelPalSearchActive: false,
+    // V2 prototype-only — see `MatchAvailabilityDemo` above.
+    matchAvailabilityDemo: 'still_looking' as MatchAvailabilityDemo,
+    // V2 prototype flow state — true once she's confirmed "Find someone
+    // else" on the mocked River connection (`PixelPalChat`), so that screen
+    // knows not to render River as still active if she navigates back to
+    // it. Cleared again once a fresh matching cycle starts (`PixelPalFinding`
+    // resets it on mount). Not a demo control, and not a real relationship
+    // model — there's only ever one mocked match in this prototype.
+    pixelPalMatchEnded: false,
   }
 }
 
@@ -376,6 +412,20 @@ type DemoState = DemoData & {
   registerHomeVisit: () => void
   retirePixelPalReminder: () => void
   revivePixelPalReminder: () => void
+
+  // V2 prototype — "Finding your Pixel Pal" demo branch (see `MatchOutcomeDemo`)
+  setMatchOutcomeDemo: (outcome: MatchOutcomeDemo) => void
+
+  // V2 prototype — "No match yet" waiting/searching Home state
+  beginPixelPalSearch: () => void
+  setMatchAvailabilityDemo: (availability: MatchAvailabilityDemo) => void
+
+  // V2 prototype — "Find someone else" from the mocked River chat
+  endPixelPalMatch: () => void
+  // Clears `pixelPalMatchEnded` — called when a fresh matching cycle starts
+  // (`PixelPalFinding` on mount), so a new mocked match isn't treated as the
+  // one she just left.
+  beginNewPixelPalMatch: () => void
 }
 
 export const useDemoStore = create<DemoState>()(
@@ -1597,6 +1647,14 @@ export const useDemoStore = create<DemoState>()(
       // Demo control only — lets the client see the reminder again after
       // dismissing it, without a full reset.
       revivePixelPalReminder: () => set({ pixelPalReminderRetired: false, pixelPalReminderForced: true }),
+
+      setMatchOutcomeDemo: (outcome) => set({ matchOutcomeDemo: outcome }),
+
+      beginPixelPalSearch: () => set({ pixelPalSearchActive: true }),
+      setMatchAvailabilityDemo: (availability) => set({ matchAvailabilityDemo: availability }),
+
+      endPixelPalMatch: () => set({ pixelPalMatchEnded: true }),
+      beginNewPixelPalMatch: () => set({ pixelPalMatchEnded: false }),
     }),
     {
       name: 'pixel-pal-demo',

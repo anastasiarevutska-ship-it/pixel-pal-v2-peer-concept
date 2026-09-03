@@ -6,9 +6,9 @@ import { Button } from '../../components/ui/Button'
 import { useDemoStore } from '../../store/useDemoStore'
 
 const cards = [
-  "We'll suggest three people who've been where you are",
-  'You choose who feels right and say hello',
-  "They're peers, not medical staff — your care team is always one tap away",
+  "We'll connect you with someone who shares relevant experience",
+  "We'll use what we know about your treatment and what matters to you",
+  "You're both patients, not medical experts — your care team is always one tap away",
 ]
 
 /**
@@ -26,10 +26,13 @@ const cards = [
  *
  * "← Back — dots — Skip", centered, matches P1 (`PalAbout.tsx`) — per direct
  * instruction to keep the two onboarding flows reading the same way. Back
- * always returns to the fork even though M2 has more than one real entry
- * point (the fork itself, the Home reminder card, Suggestions' "How Pixel
- * Pal works" link) — same simplification P1's own "← Back" already makes
- * for a screen reachable from several places, not a new inconsistency.
+ * always returns to Messages (`/m`) even though M2 has more than one real
+ * entry point (the Messages card, the Home reminder card, Suggestions' "How
+ * Pixel Pal works" link) — same simplification P1's own "← Back" already
+ * makes for a screen reachable from several places, not a new inconsistency.
+ * (The legacy `PixelPalFork` role fork still exists at `/m/pixel-pal`, just
+ * no longer linked from the active V2 journey — see
+ * docs/pixel-pal-v2-source-of-truth.md.)
  */
 export default function HowItWorks() {
   const navigate = useNavigate()
@@ -59,7 +62,7 @@ export default function HowItWorks() {
       <div className="mb-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
         <button
           type="button"
-          onClick={() => navigate('/m/pixel-pal')}
+          onClick={() => navigate('/m')}
           className="justify-self-start text-label-bold text-navy-60 hover:text-navy"
         >
           ← Back
