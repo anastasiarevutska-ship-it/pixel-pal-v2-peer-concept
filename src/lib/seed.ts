@@ -41,6 +41,12 @@ export const members: Person[] = [
     kind: 'patient',
     age: 34,
     location: 'Denver, CO',
+    // Mock Social Profile content — used by both `SocialProfilePreview` and
+    // `SocialProfileEdit` so "how your Pixel Pal will see you" has something
+    // real to show and edit in the demo.
+    signature: 'Two rounds of IVF down, still smiling most days.',
+    aboutMe: 'Denver-based, love hiking and terrible reality TV. Here for anyone who needs to vent at 2am.',
+    socialLinks: ['instagram.com/samantha.tries'],
   },
   {
     id: 'member-maya',

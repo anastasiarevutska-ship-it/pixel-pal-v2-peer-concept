@@ -287,10 +287,10 @@ export default function PixelPalChat() {
           reason.
         </p>
         <div className="flex flex-col gap-2">
-          <Button variant="destructive" onClick={handleFindSomeoneElse}>
+          <Button variant="outline" onClick={handleFindSomeoneElse}>
             Find someone else
           </Button>
-          <Button variant="ghost" onClick={() => setFindSomeoneElseOpen(false)}>
+          <Button variant="primary" onClick={() => setFindSomeoneElseOpen(false)}>
             Keep this Pixel Pal
           </Button>
         </div>

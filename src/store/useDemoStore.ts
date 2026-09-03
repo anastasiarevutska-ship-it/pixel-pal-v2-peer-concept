@@ -426,6 +426,15 @@ type DemoState = DemoData & {
   // (`PixelPalFinding` on mount), so a new mocked match isn't treated as the
   // one she just left.
   beginNewPixelPalMatch: () => void
+
+  // V2 prototype — Social Profile edit (reuses the Main App's existing
+  // Social Profile, not a separate Pixel Pal profile — see
+  // docs/pixel-pal-v2-source-of-truth.md). Writes straight to the current
+  // member's `Person` record; `SocialProfileEdit` holds its own draft state
+  // and only calls this on "Save Changes", so Back/cancel applies nothing.
+  updateSocialProfile: (
+    patch: Partial<Pick<Person, 'displayName' | 'usesAlias' | 'avatarUrl' | 'signature' | 'aboutMe' | 'socialLinks'>>,
+  ) => void
 }
 
 export const useDemoStore = create<DemoState>()(
@@ -1655,14 +1664,21 @@ export const useDemoStore = create<DemoState>()(
 
       endPixelPalMatch: () => set({ pixelPalMatchEnded: true }),
       beginNewPixelPalMatch: () => set({ pixelPalMatchEnded: false }),
+
+      updateSocialProfile: (patch) =>
+        set((state) => {
+          const person = state.people[state.currentMemberId]
+          if (!person) return {}
+          return { people: { ...state.people, [state.currentMemberId]: { ...person, ...patch } } }
+        }),
     }),
     {
       name: 'pixel-pal-demo',
-      // Bumped: `memberFlow` gained `broaderPool`/`broadened` and every
-      // `Suggestion` gained `matchesTreatment`. A v7 shortlist rehydrated as
-      // is would read `broaderPool.length` off `undefined` on M4, so older
-      // state reseeds rather than carrying the old shape forward.
-      version: 8,
+      // Bumped: Social Profile edit added `signature`/`aboutMe`/`socialLinks`
+      // to `Person` and seeded them on Samantha (v9), then dropped `groups`
+      // again — group membership isn't part of this profile (v10). Older
+      // persisted state reseeds rather than carrying a stale shape forward.
+      version: 10,
       // Schema changed mid-build; a real visitor with older persisted state
       // should just reseed quietly rather than see a console error.
       migrate: () => buildInitialState(),

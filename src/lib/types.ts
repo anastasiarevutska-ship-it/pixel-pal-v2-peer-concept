@@ -41,6 +41,16 @@ export type Person = {
   kind: 'patient' | 'employee' // employees always show real name
   age?: number
   location?: string
+
+  // --- Social Profile — the same profile the Main App shows other members,
+  // not a Pixel-Pal-specific shape (see docs/pixel-pal-v2-source-of-truth.md
+  // "Social Profile"). All optional: a patient may not have filled them in.
+  // Group membership is deliberately not modeled here — it's managed by the
+  // separate Groups/Community feature (`CommunityGroups.tsx`), not as part
+  // of this profile.
+  signature?: string // short free-text line, shown near her name
+  aboutMe?: string // longer free text — shown to others when she's chosen to provide it
+  socialLinks?: string[] // free-text links she's chosen to share
 }
 
 export type PalProfile = {

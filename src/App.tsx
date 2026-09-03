@@ -7,6 +7,7 @@ import HowItWorks from './pages/member/HowItWorks'
 import RequestNeeds from './pages/member/RequestNeeds'
 import RequestNote from './pages/member/RequestNote'
 import SocialProfilePreview from './pages/member/SocialProfilePreview'
+import SocialProfileEdit from './pages/member/SocialProfileEdit'
 import PixelPalFinding from './pages/member/PixelPalFinding'
 import PixelPalMatchFound from './pages/member/PixelPalMatchFound'
 import PixelPalChat from './pages/member/PixelPalChat'
@@ -54,6 +55,7 @@ function App() {
         <Route path="request/needs" element={<RequestNeeds />} />
         <Route path="request/note" element={<RequestNote />} />
         <Route path="social-profile-preview" element={<SocialProfilePreview />} />
+        <Route path="social-profile-edit" element={<SocialProfileEdit />} />
         <Route path="finding" element={<PixelPalFinding />} />
         <Route path="match-found" element={<PixelPalMatchFound />} />
         <Route path="pixel-pal-chat" element={<PixelPalChat />} />
